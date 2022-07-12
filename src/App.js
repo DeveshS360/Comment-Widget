@@ -14,14 +14,15 @@ export const  App = () => {
     const key = val
     list[key] = {
       text: comment,
-      comment: ''
+      comment: '',
+      showReply: false,
     }
     setVal(prev => prev+1)
     setComments({...comments})
     setComment('')
   }
 
-  // chanding top most comment value
+  // changing top most comment value
   const handleChange = (e) => {
     setComment(e.target.value)
   }
@@ -37,17 +38,25 @@ export const  App = () => {
     const key = val
     entity[key] = {
       text: entity.comment,
-      comment: ''
+      comment: '',
+      showReply: false,
     }
     setVal(prev => prev+1)
     entity.comment = ''
+    entity.showReply = false
     setComments({...comments})
   }
 
   // changing reply value for that comment
   const handleReplyChange = (entity,e) => {
     entity.comment = e.target.value
+    
     setComments({...comments})
+  }
+
+  const handleShowReply = (list, item) => {
+    list[item].showReply = true;
+    setComments({...comments});
   }
 
   // rendering comments recursively
@@ -59,13 +68,23 @@ export const  App = () => {
           <List>
             <ListItem>{list[item].text}
               <span>
-                &nbsp;<Button size='small' variant='outlined' onClick={() => handleDelete(list,item)}>Delete</Button>
-              </span>
-              <span>
-                &nbsp;<input type='text' placeholder='comment - Your Name' value={list[item].comment} onChange={(e)=>handleReplyChange(list[item],e)} />
-                &nbsp;<button onClick={() => handleReply(list[item])}>Reply</button>
+                &nbsp;<Button size='small' variant='outlined' color='error' onClick={() => handleDelete(list,item)}>Delete</Button>
+                &nbsp;<Button size='small' variant='outlined' onClick={() => handleShowReply(list,item)}>Reply</Button>
               </span>
             </ListItem>
+           {
+             list[item].showReply && (
+              <div style={{marginLeft:'10px'}}>
+              &nbsp;<input type='text' placeholder='Enter your reply' value={list[item].comment} onChange={(e)=>handleReplyChange(list[item],e)} />
+              { list[item].comment && 
+              <span>
+                 &nbsp;<button onClick={() => handleReply(list[item])}>Reply</button>
+              </span>
+               
+              }
+          </div>
+             )
+           }
             <div style={{marginLeft:'30px'}}>
               {
                 renderList(list[item])
@@ -81,10 +100,10 @@ export const  App = () => {
 
 
   return (
-   <>
+   <div style={{marginLeft: '30%'}}>
     <h1>Comment Widget</h1>
     <div>
-      <TextField placeholder='Enter a comment - Your Name' style={{width:'500px'}} value={comment} onChange={handleChange}/>&nbsp;&nbsp;
+      <TextField placeholder='Enter a comment' style={{width:'500px'}} value={comment} onChange={handleChange}/>&nbsp;&nbsp;
       <Button variant='contained' onClick={(e) => handleClick(comments)}>Add comment</Button>
     </div>
     <div>
@@ -94,7 +113,7 @@ export const  App = () => {
         : null
       }
     </div>
-   </>
+   </div>
   )
 
 }
